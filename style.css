@@ -20,13 +20,14 @@ body {
 
 .vega-bindings {
     display: flex;
+    gap: 120px;
+    padding-left: 50px;
 }
 
 .vega-bind {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-right: 5px;
 }
 
 .chart-container {
@@ -35,4 +36,8 @@ body {
 
 .marks {
     border-radius: 5px;
+}
+
+.vega-bind-name{
+    display: none;
 }

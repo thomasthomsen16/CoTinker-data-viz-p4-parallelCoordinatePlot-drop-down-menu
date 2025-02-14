@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(response => response.text())
         .then(csvData => {
             const parsedData = parseCSV(csvData);
-            const sampleData = getRandomSample(parsedData, 250);
+            const sampleData = getRandomSample(parsedData, 100);
             renderChart(sampleData, "chart1");
         })
         .catch(error => console.error("Error loading CSV data: ", error));
@@ -21,38 +21,23 @@ function renderChart(sampleData, chartId) {
         },
         "width": 800,
         "height": 500,
-        params: [
+        "params": [
             {
-                name: "edm",
-                value: 1,
-                bind: { input: "checkbox" }
+                "name": "Akse 1",
+                "bind": {"input": "select", "options": ["tempo", "danceability", "energy","valence"]}
             },
             {
-                name: "latin",
-                value: 1,
-                bind: { input: "checkbox" }
+                "name": "Akse 2",
+                "bind": {"input": "select", "options": ["tempo", "danceability", "energy","valence"]}
             },
             {
-                name: "pop",
-                value: 1,
-                bind: { input: "checkbox" }
+                "name": "Akse 3",
+                "bind": {"input": "select", "options": ["tempo", "danceability", "energy","valence"]}
             },
             {
-                name: "rnb",
-                value: 1,
-                bind: { input: "checkbox" }
+                "name": "Akse 4",
+                "bind": {"input": "select", "options": ["tempo", "danceability", "energy","valence"]}
             },
-            {
-                name: "rap",
-                value: 1,
-                bind: { input: "checkbox" }
-            },
-            {
-                name: "rock",
-                value: 1,
-                bind: { input: "checkbox" }
-            },
-
         ],
         "transform": [
             {
@@ -98,22 +83,6 @@ function renderChart(sampleData, chartId) {
                 "encoding": {
                     "color": { "type": "nominal", "field": "playlist_genre" },
                     "detail": { "type": "nominal", "field": "index" },
-                    "opacity": {
-                        "condition": {
-                            "test": {
-                                "or": [
-                                    { "and": ["datum.playlist_genre == 'edm'", "edm"] },
-                                    { "and": ["datum.playlist_genre == 'latin'", "latin"] },
-                                    { "and": ["datum.playlist_genre == 'pop'", "pop"] },
-                                    { "and": ["datum.playlist_genre == 'r&b'", "rnb"] },
-                                    { "and": ["datum.playlist_genre == 'rap'", "rap"] },
-                                    { "and": ["datum.playlist_genre == 'rock'", "rock"] }
-                                ]
-                            },
-                            "value": 1
-                        },
-                        "value": 0
-                    },
                     "x": {
                         "type": "nominal",
                         "field": "key",
