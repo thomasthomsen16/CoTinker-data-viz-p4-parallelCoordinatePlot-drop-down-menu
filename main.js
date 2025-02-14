@@ -23,22 +23,27 @@ function renderChart(sampleData, chartId) {
         "height": 500,
         "params": [
             {
-                "name": "Akse 1",
-                "bind": {"input": "select", "options": ["tempo", "danceability", "energy","valence"]}
+                "name": "axis1",
+                "value": "tempo",
+                "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence"] }
             },
             {
-                "name": "Akse 2",
-                "bind": {"input": "select", "options": ["tempo", "danceability", "energy","valence"]}
+                "name": "axis2",
+                "value": "danceability",
+                "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence"] }
             },
             {
-                "name": "Akse 3",
-                "bind": {"input": "select", "options": ["tempo", "danceability", "energy","valence"]}
+                "name": "axis3",
+                "value": "energy",
+                "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence"] }
             },
             {
-                "name": "Akse 4",
-                "bind": {"input": "select", "options": ["tempo", "danceability", "energy","valence"]}
-            },
-        ],
+                "name": "axis4",
+                "value": "valence",
+                "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence"] }
+            }
+        ]
+        ,
         "transform": [
             {
                 "filter": "datum['danceability'] != null && datum['energy'] != null && datum['valence'] != null && datum['tempo'] != null"

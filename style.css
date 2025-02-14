@@ -20,8 +20,9 @@ body {
 
 .vega-bindings {
     display: flex;
-    gap: 120px;
-    padding-left: 50px;
+    padding-left: 60px;
+    justify-content: space-between;
+    width: 700px;
 }
 
 .vega-bind {
