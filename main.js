@@ -15,166 +15,197 @@ function renderChart(sampleData, chartId) {
 
     const spec = {
         "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-        "description": "Parallel coordinates plot for Spotify songs showing audio features, color-coded by genre.",
+        "description": "Parallel coordinates plot for Spotify songs with selectable axes via dropdowns.",
         "data": {
-            "values": sampleData  // Data passed from JavaScript (after parsing CSV)
+          "values": sampleData
         },
         "width": 800,
         "height": 500,
         "params": [
-            {
-                "name": "axis1",
-                "value": "tempo",
-                "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence"] }
-            },
-            {
-                "name": "axis2",
-                "value": "danceability",
-                "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence"] }
-            },
-            {
-                "name": "axis3",
-                "value": "energy",
-                "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence"] }
-            },
-            {
-                "name": "axis4",
-                "value": "valence",
-                "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence"] }
-            }
-        ]
-        ,
+          {
+            "name": "axis1",
+            "value": "tempo",
+            "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence", "speechiness"] }
+          },
+          {
+            "name": "axis2",
+            "value": "danceability",
+            "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence", "speechiness"] }
+          },
+          {
+            "name": "axis3",
+            "value": "energy",
+            "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence", "speechiness"] }
+          },
+          {
+            "name": "axis4",
+            "value": "valence",
+            "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence", "speechiness"] }
+          }
+        ],
         "transform": [
-            {
-                "filter": "datum['danceability'] != null && datum['energy'] != null && datum['valence'] != null && datum['tempo'] != null"
-            },
-            {
-                "window": [{ "op": "count", "as": "index" }]
-            },
-            {
-                "fold": ["tempo", "danceability", "energy", "valence"],  // Only the selected features
-                "as": ["key", "value"]
-            },
-            {
-                "joinaggregate": [
-                    { "op": "min", "field": "value", "as": "min" },
-                    { "op": "max", "field": "value", "as": "max" }
-                ],
-                "groupby": ["key"]
-            },
-            {
-                "calculate": "(datum.value - datum.min) / (datum.max - datum.min)",
-                "as": "norm_val"
-            },
-            {
-                "calculate": "(datum.min + datum.max) / 2",
-                "as": "mid"
-            }
+          {
+            "filter": "datum[axis1] != null && datum[axis2] != null && datum[axis3] != null && datum[axis4] != null"
+          },
+          {
+            "window": [{ "op": "count", "as": "index" }]
+          },
+          {
+            "fold": ["tempo", "danceability", "energy", "valence", "speechiness"],
+            "as": ["key", "value"]
+          },
+          {
+            "filter": "datum.key === axis1 || datum.key === axis2 || datum.key === axis3 || datum.key === axis4"
+          },
+          {
+            "joinaggregate": [
+              { "op": "min", "field": "value", "as": "min" },
+              { "op": "max", "field": "value", "as": "max" }
+            ],
+            "groupby": ["key"]
+          },
+          {
+            "calculate": "datum.max === datum.min ? 0 : (datum.value - datum.min) / (datum.max - datum.min)",
+            "as": "norm_val"
+          },
+          {
+            "calculate": "(datum.min + datum.max) / 2",
+            "as": "mid"
+          }
         ],
         "layer": [
-            {
-                "mark": { "type": "rule", "color": "#ccc" },
-                "encoding": {
-                    "detail": { "aggregate": "count" },
-                    "x": {
-                        "type": "nominal",
-                        "field": "key",
-                        "sort": ["tempo", "danceability", "energy", "valence"]
-                    }
-                }
-            },
-            {
-                "mark": "line",
-                "encoding": {
-                    "color": { "type": "nominal", "field": "playlist_genre" },
-                    "detail": { "type": "nominal", "field": "index" },
-                    "x": {
-                        "type": "nominal",
-                        "field": "key",
-                        "sort": ["tempo", "danceability", "energy", "valence"]
-                    },
-                    "y": { "type": "quantitative", "field": "norm_val", "axis": null },
-                    "tooltip": [
-                        { "type": "quantitative", "field": "tempo" },
-                        { "type": "quantitative", "field": "danceability" },
-                        { "type": "quantitative", "field": "energy" },
-                        { "type": "quantitative", "field": "valence" }
-                    ]
-                }
-            },
-            {
-                "encoding": {
-                    "x": {
-                        "type": "nominal",
-                        "field": "key",
-                        "sort": ["tempo", "danceability", "energy", "valence"]
-                    },
-                    "y": { "value": 0 }
-                },
-                "layer": [
-                    {
-                        "mark": { "type": "text", "style": "label" },
-                        "encoding": {
-                            "text": { "aggregate": "max", "field": "max" }
-                        }
-                    },
-                    {
-                        "mark": { "type": "tick", "style": "tick", "size": 8, "color": "#ccc" }
-                    }
+          {
+            "mark": { "type": "rule", "color": "#ccc" },
+            "encoding": {
+              "detail": { "aggregate": "count" },
+              "x": {
+                "type": "nominal",
+                "field": "key",
+                "sort": [
+                  { "signal": "axis1" },
+                  { "signal": "axis2" },
+                  { "signal": "axis3" },
+                  { "signal": "axis4" }
                 ]
-            },
-            {
-                "encoding": {
-                    "x": {
-                        "type": "nominal",
-                        "field": "key",
-                        "sort": ["tempo", "danceability", "energy", "valence"]
-                    },
-                    "y": { "value": 150 }
-                },
-                "layer": [
-                    {
-                        "mark": { "type": "text", "style": "label" },
-                        "encoding": {
-                            "text": { "aggregate": "min", "field": "mid" }
-                        }
-                    },
-                    {
-                        "mark": { "type": "tick", "style": "tick", "size": 8, "color": "#ccc" }
-                    }
-                ]
-            },
-            {
-                "encoding": {
-                    "x": {
-                        "type": "nominal",
-                        "field": "key",
-                        "sort": ["tempo", "danceability", "energy", "valence"]
-                    },
-                    "y": { "value": 300 }
-                },
-                "layer": [
-                    {
-                        "mark": { "type": "text", "style": "label" },
-                        "encoding": {
-                            "text": { "aggregate": "min", "field": "min" }
-                        }
-                    },
-                    {
-                        "mark": { "type": "tick", "style": "tick", "size": 8, "color": "#ccc" }
-                    }
-                ]
+              }
             }
+          },
+          {
+            "mark": "line",
+            "encoding": {
+              "color": { "type": "nominal", "field": "playlist_genre" },
+              "detail": { "type": "nominal", "field": "index" },
+              "x": {
+                "type": "nominal",
+                "field": "key",
+                "sort": [
+                  { "signal": "axis1" },
+                  { "signal": "axis2" },
+                  { "signal": "axis3" },
+                  { "signal": "axis4" }
+                ]
+              },
+              "y": {
+                "type": "quantitative",
+                "field": "norm_val",
+                "axis": null
+              },
+              "tooltip": [
+                { "type": "quantitative", "field": "tempo" },
+                { "type": "quantitative", "field": "danceability" },
+                { "type": "quantitative", "field": "energy" },
+                { "type": "quantitative", "field": "valence" }
+              ]
+            }
+          },
+          {
+            "encoding": {
+              "x": {
+                "type": "nominal",
+                "field": "key",
+                "sort": [
+                  { "signal": "axis1" },
+                  { "signal": "axis2" },
+                  { "signal": "axis3" },
+                  { "signal": "axis4" }
+                ]
+              },
+              "y": { "value": 0 }
+            },
+            "layer": [
+              {
+                "mark": { "type": "text", "style": "label" },
+                "encoding": {
+                  "text": { "aggregate": "max", "field": "max" }
+                }
+              },
+              {
+                "mark": { "type": "tick", "style": "tick", "size": 8, "color": "#ccc" }
+              }
+            ]
+          },
+          {
+            "encoding": {
+              "x": {
+                "type": "nominal",
+                "field": "key",
+                "sort": [
+                  { "signal": "axis1" },
+                  { "signal": "axis2" },
+                  { "signal": "axis3" },
+                  { "signal": "axis4" }
+                ]
+              },
+              "y": { "value": 150 }
+            },
+            "layer": [
+              {
+                "mark": { "type": "text", "style": "label" },
+                "encoding": {
+                  "text": { "aggregate": "min", "field": "mid" }
+                }
+              },
+              {
+                "mark": { "type": "tick", "style": "tick", "size": 8, "color": "#ccc" }
+              }
+            ]
+          },
+          {
+            "encoding": {
+              "x": {
+                "type": "nominal",
+                "field": "key",
+                "sort": [
+                  { "signal": "axis1" },
+                  { "signal": "axis2" },
+                  { "signal": "axis3" },
+                  { "signal": "axis4" }
+                ]
+              },
+              "y": { "value": 300 }
+            },
+            "layer": [
+              {
+                "mark": { "type": "text", "style": "label" },
+                "encoding": {
+                  "text": { "aggregate": "min", "field": "min" }
+                }
+              },
+              {
+                "mark": { "type": "tick", "style": "tick", "size": 8, "color": "#ccc" }
+              }
+            ]
+          }
         ],
         "config": {
-            "axisX": { "domain": false, "labelAngle": 0, "tickColor": "#ccc", "title": null },
-            "view": { "stroke": null },
-            "style": {
-                "label": { "baseline": "middle", "align": "right", "dx": -5 },
-                "tick": { "orient": "horizontal" }
-            }
+          "axisX": { "domain": false, "labelAngle": 0, "tickColor": "#ccc", "title": null },
+          "view": { "stroke": null },
+          "style": {
+            "label": { "baseline": "middle", "align": "right", "dx": -5 },
+            "tick": { "orient": "horizontal" }
+          }
         }
-    };
+      };
 
     vegaEmbed(`#${chartId}`, spec);
 }
@@ -202,7 +233,7 @@ function parseCSV(csvData) {
 }
 
 function getRandomSample(data, sampleSize) {
-    const requiredFields = ["tempo", "danceability", "energy", "valence"];
+    const requiredFields = ["tempo", "danceability", "energy", "valence", "speechiness"];
     const validData = data.filter(row => requiredFields.every(field => row[field] !== null));
 
     if (validData.length <= sampleSize) {
