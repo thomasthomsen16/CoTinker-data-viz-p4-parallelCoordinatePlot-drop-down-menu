@@ -25,22 +25,22 @@ function renderChart(sampleData, chartId) {
           {
             "name": "axis1",
             "value": "tempo",
-            "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence", "speechiness"] }
+            "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence", "speechiness", "instrumentalness", "duration_ms", "liveness"] }
           },
           {
             "name": "axis2",
             "value": "danceability",
-            "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence", "speechiness"] }
+            "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence", "speechiness", "instrumentalness", "duration_ms", "liveness"] }
           },
           {
             "name": "axis3",
             "value": "energy",
-            "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence", "speechiness"] }
+            "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence", "speechiness", "instrumentalness" , "duration_ms", "liveness"] }
           },
           {
             "name": "axis4",
             "value": "valence",
-            "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence", "speechiness"] }
+            "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence", "speechiness", "instrumentalness", "duration_ms", "liveness"] }
           }
         ],
         "transform": [
@@ -51,7 +51,7 @@ function renderChart(sampleData, chartId) {
             "window": [{ "op": "count", "as": "index" }]
           },
           {
-            "fold": ["tempo", "danceability", "energy", "valence", "speechiness"],
+            "fold": ["tempo", "danceability", "energy", "valence", "speechiness", "instrumentalness", "duration_ms", "liveness"],
             "as": ["key", "value"]
           },
           {
@@ -110,12 +110,12 @@ function renderChart(sampleData, chartId) {
                 "field": "norm_val",
                 "axis": null
               },
-              "tooltip": [
-                { "type": "quantitative", "field": "tempo" },
-                { "type": "quantitative", "field": "danceability" },
-                { "type": "quantitative", "field": "energy" },
-                { "type": "quantitative", "field": "valence" }
-              ]
+            //   "tooltip": [
+            //     { "type": "quantitative", "field": "axis1" },
+            //     { "type": "quantitative", "field": "axis2" },
+            //     { "type": "quantitative", "field": "axis3" },
+            //     { "type": "quantitative", "field": "axis4" }
+            //   ]
             }
           },
           {
@@ -233,7 +233,7 @@ function parseCSV(csvData) {
 }
 
 function getRandomSample(data, sampleSize) {
-    const requiredFields = ["tempo", "danceability", "energy", "valence", "speechiness"];
+    const requiredFields = ["tempo", "danceability", "energy", "valence", "speechiness", "instrumentalness", "duration_ms", "liveness"];
     const validData = data.filter(row => requiredFields.every(field => row[field] !== null));
 
     if (validData.length <= sampleSize) {
