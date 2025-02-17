@@ -1,13 +1,63 @@
+let chartView = [];
+
 document.addEventListener("DOMContentLoaded", function () {
     fetch('https://raw.githubusercontent.com/thomasthomsen16/dataset-p2/refs/heads/main/30000_spotify_songs.csv')
         .then(response => response.text())
         .then(csvData => {
             const parsedData = parseCSV(csvData);
-            const sampleData = getRandomSample(parsedData, 80);
+            const sampleData = getRandomSample(parsedData, 400);
             renderChart(sampleData, "chart1");
         })
-        .catch(error => console.error("Error loading CSV data: ", error));
+    // Handle checkbox interaction to update the signal
+    document.getElementById("emdCheckbox").addEventListener("change", function() {
+      const checked = this.checked;  // Get the checked status of the checkbox
+      // Update the signal value for 'edm'
+      if (chartView) { // Ensure chartView is defined
+          chartView.signal("edm", checked ? 1 : 0).runAsync(); // Set the 'edm' signal value 
+      }
+  });
+    // Handle checkbox interaction to update the signal
+    document.getElementById("latinCheckbox").addEventListener("change", function() {
+      const checked = this.checked;  // Get the checked status of the checkbox
+      // Update the signal value for 'edm'
+      if (chartView) { // Ensure chartView is defined
+          chartView.signal("latin", checked ? 1 : 0).runAsync(); // Set the 'edm' signal value 
+      }
+  });
+    // Handle checkbox interaction to update the signal
+    document.getElementById("popCheckbox").addEventListener("change", function() {
+      const checked = this.checked;  // Get the checked status of the checkbox
+      // Update the signal value for 'edm'
+      if (chartView) { // Ensure chartView is defined
+          chartView.signal("pop", checked ? 1 : 0).runAsync(); // Set the 'edm' signal value 
+      }
+  });
+    // Handle checkbox interaction to update the signal
+    document.getElementById("rnbCheckbox").addEventListener("change", function() {
+      const checked = this.checked;  // Get the checked status of the checkbox
+      // Update the signal value for 'edm'
+      if (chartView) { // Ensure chartView is defined
+          chartView.signal("rnb", checked ? 1 : 0).runAsync(); // Set the 'edm' signal value 
+      }
+  });
+    // Handle checkbox interaction to update the signal
+    document.getElementById("rapCheckbox").addEventListener("change", function() {
+      const checked = this.checked;  // Get the checked status of the checkbox
+      // Update the signal value for 'edm'
+      if (chartView) { // Ensure chartView is defined
+          chartView.signal("rap", checked ? 1 : 0).runAsync(); // Set the 'edm' signal value 
+      }
+  });
+    // Handle checkbox interaction to update the signal
+    document.getElementById("rockCheckbox").addEventListener("change", function() {
+      const checked = this.checked;  // Get the checked status of the checkbox
+      // Update the signal value for 'edm'
+      if (chartView) { // Ensure chartView is defined
+          chartView.signal("rock", checked ? 1 : 0).runAsync(); // Set the 'edm' signal value 
+      }
+  });
 });
+
 
 function renderChart(sampleData, chartId) {
     const chartContainer = document.getElementById(chartId);
@@ -45,32 +95,26 @@ function renderChart(sampleData, chartId) {
           {
             name: "edm",
             value: 1,
-            bind: { input: "checkbox" }
         },
         {
             name: "latin",
             value: 1,
-            bind: { input: "checkbox" }
         },
         {
             name: "pop",
             value: 1,
-            bind: { input: "checkbox" }
         },
         {
             name: "rnb",
             value: 1,
-            bind: { input: "checkbox" }
         },
         {
             name: "rap",
             value: 1,
-            bind: { input: "checkbox" }
         },
         {
             name: "rock",
             value: 1,
-            bind: { input: "checkbox" }
         }
         ],
         "transform": [
@@ -253,8 +297,12 @@ function renderChart(sampleData, chartId) {
         }
       };
 
-    vegaEmbed(`#${chartId}`, spec);
+    vegaEmbed(`#${chartId}`, spec).then(result => {
+        chartView=result.view;
+    }).catch(console.error);
 }
+
+
 
 // Function to parse CSV data into an array of objects
 function parseCSV(csvData) {
