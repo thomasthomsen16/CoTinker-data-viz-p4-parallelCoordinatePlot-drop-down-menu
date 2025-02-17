@@ -75,22 +75,22 @@ function renderChart(sampleData, chartId) {
       {
         "name": "axis1",
         "value": "tempo",
-        "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence", "speechiness", "instrumentalness", "duration_ms", "liveness"] }
+        "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence", "duration_ms", "release_year"] }
       },
       {
         "name": "axis2",
         "value": "danceability",
-        "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence", "speechiness", "instrumentalness", "duration_ms", "liveness"] }
+        "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence","duration_ms", "release_year"] }
       },
       {
         "name": "axis3",
         "value": "energy",
-        "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence", "speechiness", "instrumentalness", "duration_ms", "liveness"] }
+        "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence", "speechiness", "instrumentalness", "duration_ms", "liveness", "release_year"] }
       },
       {
         "name": "axis4",
         "value": "valence",
-        "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence", "speechiness", "instrumentalness", "duration_ms", "liveness"] }
+        "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence", "duration_ms", "release_year"] }
       },
       {
         name: "edm",
@@ -119,13 +119,17 @@ function renderChart(sampleData, chartId) {
     ],
     "transform": [
       {
+        "calculate": "year(datetime(datum.track_album_release_date))",
+        "as": "release_year"
+      },
+      {
         "filter": "datum[axis1] != null && datum[axis2] != null && datum[axis3] != null && datum[axis4] != null"
       },
       {
         "window": [{ "op": "count", "as": "index" }]
       },
       {
-        "fold": ["tempo", "danceability", "energy", "valence", "speechiness", "instrumentalness", "duration_ms", "liveness"],
+        "fold": ["tempo", "danceability", "energy", "valence", "speechiness", "instrumentalness", "duration_ms", "liveness", "release_year"],
         "as": ["key", "value"]
       },
       {
@@ -145,7 +149,7 @@ function renderChart(sampleData, chartId) {
       {
         "calculate": "(datum.min + datum.max) / 2",
         "as": "mid"
-      }
+      },
     ],
     "layer": [
       {
@@ -327,7 +331,7 @@ function parseCSV(csvData) {
 }
 
 function getRandomSample(data, sampleSize) {
-  const requiredFields = ["tempo", "danceability", "energy", "valence", "speechiness", "instrumentalness", "duration_ms", "liveness"];
+  const requiredFields = ["tempo", "danceability", "energy", "valence", "speechiness", "instrumentalness", "duration_ms", "liveness", "release_year"];
   const validData = data.filter(row => requiredFields.every(field => row[field] !== null));
 
   if (validData.length <= sampleSize) {
@@ -336,3 +340,4 @@ function getRandomSample(data, sampleSize) {
 
   return validData.sort(() => 0.5 - Math.random()).slice(0, sampleSize);
 }
+
