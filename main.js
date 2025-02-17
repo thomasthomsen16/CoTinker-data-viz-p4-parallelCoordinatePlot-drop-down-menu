@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(response => response.text())
         .then(csvData => {
             const parsedData = parseCSV(csvData);
-            const sampleData = getRandomSample(parsedData, 100);
+            const sampleData = getRandomSample(parsedData, 80);
             renderChart(sampleData, "chart1");
         })
         .catch(error => console.error("Error loading CSV data: ", error));
@@ -41,7 +41,37 @@ function renderChart(sampleData, chartId) {
             "name": "axis4",
             "value": "valence",
             "bind": { "input": "select", "options": ["tempo", "danceability", "energy", "valence", "speechiness", "instrumentalness", "duration_ms", "liveness"] }
-          }
+          },
+          {
+            name: "edm",
+            value: 1,
+            bind: { input: "checkbox" }
+        },
+        {
+            name: "latin",
+            value: 1,
+            bind: { input: "checkbox" }
+        },
+        {
+            name: "pop",
+            value: 1,
+            bind: { input: "checkbox" }
+        },
+        {
+            name: "rnb",
+            value: 1,
+            bind: { input: "checkbox" }
+        },
+        {
+            name: "rap",
+            value: 1,
+            bind: { input: "checkbox" }
+        },
+        {
+            name: "rock",
+            value: 1,
+            bind: { input: "checkbox" }
+        }
         ],
         "transform": [
           {
@@ -95,6 +125,22 @@ function renderChart(sampleData, chartId) {
             "encoding": {
               "color": { "type": "nominal", "field": "playlist_genre" },
               "detail": { "type": "nominal", "field": "index" },
+              "opacity": {
+                "condition": {
+                    "test": {
+                        "or": [
+                            { "and": ["datum.playlist_genre == 'edm'", "edm"] },
+                            { "and": ["datum.playlist_genre == 'latin'", "latin"] },
+                            { "and": ["datum.playlist_genre == 'pop'", "pop"] },
+                            { "and": ["datum.playlist_genre == 'r&b'", "rnb"] },
+                            { "and": ["datum.playlist_genre == 'rap'", "rap"] },
+                            { "and": ["datum.playlist_genre == 'rock'", "rock"] }
+                        ]
+                    },
+                    "value": 1
+                },
+                "value": 0
+            },
               "x": {
                 "type": "nominal",
                 "field": "key",
