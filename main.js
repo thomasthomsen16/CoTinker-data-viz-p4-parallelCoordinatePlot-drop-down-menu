@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .then(response => response.text())
     .then(csvData => {
       const parsedData = parseCSV(csvData);
-      const sampleData = getRandomSample(parsedData, 400);
+      const sampleData = getRandomSample(parsedData, 100);
       renderChart(sampleData, "chart1");
     })
   // Handle checkbox interaction to update the signal
